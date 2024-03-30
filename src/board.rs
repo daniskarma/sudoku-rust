@@ -144,6 +144,8 @@ impl Board {
        let ns = cell_to_sqr(n);
         self.sqr(ns)
     }
+
+
     /// Getter for the numbers of a row. 
     /// Takes row number 0 to 8, up to down.
     pub fn row_num(&self, n:usize) -> Vec<u8> {
@@ -155,6 +157,7 @@ impl Board {
         let nr = cell_to_row(n);
         self.row_num(nr)
     }
+
     /// Getter for the numbers of a column.
     /// Takes column number 0 to 8, left to right.
     pub fn col_num(&self, n:usize) -> Vec<u8> {
@@ -166,6 +169,7 @@ impl Board {
         let nc = cell_to_col(n);
         self.col_num(nc)
     }
+
     /// Getter for the numbers of a square.
     /// Takes square number 0 to 8, top left to botton right.
     pub fn sqr_num(&self, n:usize) -> Vec<u8> {
@@ -211,6 +215,15 @@ impl Board {
     pub fn sqr_opt_fr_cell(&self, n:usize) -> Vec<Vec<u8>> {
         let ns = cell_to_sqr(n);
         self.sqr_opt(ns)
+    }
+
+    pub fn cells_to_opts(&self, region_cells: &Vec<&Cell>) -> Vec<Vec<u8>>{
+        let mut region_opts: Vec<Vec<u8>> = vec![];
+        for cell in region_cells{
+            let opts = cell.options();
+            region_opts.push(opts.to_vec());
+        }
+        region_opts
     }
 }
 

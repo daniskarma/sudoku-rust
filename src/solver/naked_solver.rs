@@ -27,8 +27,11 @@ fn get_candidates(groups: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>>{
 
 /// Generic function for naked pairs, triple or quadruple solving.
 /// quantity parameter determine if its pairs, triple or quadruple.
-fn naked_group (board: &mut Board, region_opt: Vec<Vec<u8>>, region_cells: Vec<&Cell>, quantity: usize){
+fn naked_group (board: &mut Board, region_cells: Vec<&Cell>, quantity: usize){
+    // TODO - revisar como pasamos region_Cellls si como referencia o borrow.
     let mut cells_to_change:Vec<(usize,Vec<u8>)> = Vec::new();
+
+    let region_opt = board.cells_to_opts(&region_cells);
 
     let isolated_groups = isolate_quantiy_groups(&region_opt, quantity);
     let candidates = get_candidates(isolated_groups, quantity);
@@ -48,33 +51,16 @@ fn naked_group (board: &mut Board, region_opt: Vec<Vec<u8>>, region_cells: Vec<&
     }
 }
 
-// TODO - no me gusta tener que usar col_opt y col_cells me gustaria solo pasar una vez el grupo
-// TODO - no me gusta escribir 3 veces el bucle, igual haciendo una lista y un foreach podría
-// hacerlo en una.
-// TODO - valorar si solve_naked podría ser una sola funcion con un parametro quantity o si tengo
-// que hacer 3 funciones solve_naked_pairs(), solve_naked_triples(), solve_naked_quadrupes()
-pub fn solve_naked_pairs(board: &mut Board){
-    let group = 2;
-    for i in 0..9{
-        let _board = board.clone();
-        let row_cells = _board.row(i);
-        let row_opt = _board.row_opt(i);
-        naked_group(board, row_opt, row_cells, group);
-    }
-    for i in 0..9{
-        let _board = board.clone();
-        let col_cells = _board.col(i);
-        let col_opt = _board.col_opt(i);
-        naked_group(board, col_opt, col_cells, group);
-    }
-    for i in 0..9{
-        let _board = board.clone();
-        let sqr_cells = _board.sqr(i);
-        let sqr_opt = _board.sqr_opt(i);
-        naked_group(board, sqr_opt, sqr_cells, group);
+pub fn solve_naked(board: &mut Board, quantity: usize){
+    let groups = [Board::row, Board::col, Board::sqr];
+    let board_cells = board.clone();
+    for group in &groups {
+        for i in 0..9 {
+            let cells = group(&board_cells, i);
+            naked_group(board, cells, quantity);
+        }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -125,7 +111,7 @@ mod tests {
         let candidates = get_candidates(isolated_groups, quantity);
         assert_eq!(candidates, vec![[2,5]]);
         
-        naked_group(&mut board, my_group, my_cells, quantity);
+        naked_group(&mut board, my_cells, quantity);
         let new_row_opts = board.row_opt(0);
         assert_eq!(new_row_opts, vec![vec![3,4,6,7],vec![9],vec![1],vec![3,7],vec![4,6],vec![4],vec![2,5],vec![2,5],vec![8]])
         

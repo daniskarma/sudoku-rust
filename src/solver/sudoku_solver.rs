@@ -66,7 +66,7 @@ fn singles (board: &mut Board, n: usize){
 fn solve_singles (board: &mut Board){
     board_it_cells(board, singles);
 } 
-
+// TODO - igual deberia ir a mod auxiliar?
 /// Apply function over Board iterating over 81 cells.
 fn board_it_cells (board: &mut Board, function: fn(&mut Board, usize)) {
     for n in 0..81 {
@@ -75,20 +75,15 @@ fn board_it_cells (board: &mut Board, function: fn(&mut Board, usize)) {
         }
     }
 }
-/*
-/// Apply function over Board iterating over 9 row, col or sqr.
-fn board_it_blocks (board: &mut Board, function: fn(&mut Board, usize)) {
-    for n in 0..9 {
-        function(board, n)
-    }
-}
-*/
+
+
+
 pub fn solve (board: &mut Board){
     let mut passes = 0;
     loop {
         let prev_board = board.clone();
         solve_update_options(board);
-        naked_solver::solve_naked_pairs(board);
+        naked_solver::solve_naked(board, 2);
         solve_singles_alone(board);
         solve_singles(board);
         passes += 1;        
