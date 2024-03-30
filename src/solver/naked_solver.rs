@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 use crate::board::{Board, Cell};
 
+/// Returns list of options that have the required lenght (quantity)
 fn isolate_quantiy_groups (region_opt: &Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>>{
     let mut group_list:Vec<Vec<u8>> = vec![];
     for opt in region_opt {
@@ -10,6 +11,8 @@ fn isolate_quantiy_groups (region_opt: &Vec<Vec<u8>>, quantity: usize) -> Vec<Ve
     }
     group_list
 }
+/// Returns a list of options that repeat x times withing the selected group. X being quantity.
+/// The groups are suppodsely filtered by isolate_quantity_groups() beforehand.
 fn get_candidates(groups: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>>{
     let mut candidate_list:Vec<Vec<u8>> = vec![];
     for group in &groups {
@@ -23,6 +26,7 @@ fn get_candidates(groups: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>>{
 }
 
 /// Generic function for naked pairs, triple or quadruple solving.
+/// quantity parameter determine if its pairs, triple or quadruple.
 fn naked_group (board: &mut Board, region_opt: Vec<Vec<u8>>, region_cells: Vec<&Cell>, quantity: usize){
     let mut cells_to_change:Vec<(usize,Vec<u8>)> = Vec::new();
 
@@ -44,7 +48,11 @@ fn naked_group (board: &mut Board, region_opt: Vec<Vec<u8>>, region_cells: Vec<&
     }
 }
 
-
+// TODO - no me gusta tener que usar col_opt y col_cells me gustaria solo pasar una vez el grupo
+// TODO - no me gusta escribir 3 veces el bucle, igual haciendo una lista y un foreach podría
+// hacerlo en una.
+// TODO - valorar si solve_naked podría ser una sola funcion con un parametro quantity o si tengo
+// que hacer 3 funciones solve_naked_pairs(), solve_naked_triples(), solve_naked_quadrupes()
 pub fn solve_naked_pairs(board: &mut Board){
     let group = 2;
     for i in 0..9{
@@ -65,8 +73,6 @@ pub fn solve_naked_pairs(board: &mut Board){
         let sqr_opt = _board.sqr_opt(i);
         naked_group(board, sqr_opt, sqr_cells, group);
     }
-    // TODO - los indices de sqr_opt son raros porque no se indexa igual sqr que sqr_opt
-    // SOLUCIONARLO
 }
 
 
