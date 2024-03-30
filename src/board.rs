@@ -85,11 +85,9 @@ impl Board {
         if n > 80 {panic!("Cell number mut be less than 81.")}
         &self.cells[n]
     }
-    // TODO - por ahora los getters row, col y sqr toman numeros del 0..9 y los getters de row_col y
-    // demás toman de 0..81, quizas debería normalizarlo
 
     /// Getter for a row. Returns an inmutable reference, so Cells cannot be modified.
-    /// Rows are listed up to down.
+    /// Rows are listed up to down, 0 to 8.
     pub fn row(&self, n:usize) -> Vec<&Cell> {
         if n > 8 {panic!("row number must be less than 9")}
         let mut row = Vec::new();
@@ -99,8 +97,15 @@ impl Board {
         }
         row
     }
+    /// Getter for a row. Returns an inmutable reference, so Cells cannot be modified.
+    /// Get the row from a cell position, 0 to 80.
+    pub fn row_fr_cell(&self, n:usize) -> Vec<&Cell> {
+        let nr = cell_to_row(n);
+        self.row(nr)
+    }
+
     /// Getter for a column. Returns an inmutable reference, so Cells cannot be modified.
-    /// Collumns are listed left to right.
+    /// Collumns are listed left to right, 0 to 8.
     pub fn col(&self, n:usize) -> Vec<&Cell> {
         if n > 8 {panic!("col number must be less than 9")}
         let mut col = Vec::new();
@@ -110,6 +115,13 @@ impl Board {
         }
         col
     }
+    /// Getter for a column. Returns an inmutable reference, so Cells cannot be modified.
+    /// Get the column from a cell position, 0 to 80.
+    pub fn col_fr_cell(&self, n:usize) -> Vec<&Cell> {
+        let nc = cell_to_col(n);
+        self.col(nc)
+    }
+
     /// Getter for a Square. Returns an inmutable reference, so Cells cannot be modified.
     /// Squares are listed uper left to botton right. Same for Cells inside a Box.
     pub fn sqr(&self, n:usize) -> Vec<&Cell> {
@@ -125,40 +137,96 @@ impl Board {
         }
         sqr
     }
-    /// Getter for the numbers of a row.
+    /// Getter for a Square. Returns an inmutable reference, so Cells cannot be modified.
+    /// Squares are listed uper left to botton right. Same for Cells inside a Box.
+    /// Get the square from a cell position, 0 to 80.
+    pub fn sqr_fr_cell(&self, n:usize) -> Vec<&Cell> {
+       let ns = cell_to_sqr(n);
+        self.sqr(ns)
+    }
+    /// Getter for the numbers of a row. 
+    /// Takes row number 0 to 8, up to down.
     pub fn row_num(&self, n:usize) -> Vec<u8> {
-        let nr = n / 9;
-        self.row(nr).iter().map(|x|x.number()).collect()
+        self.row(n).iter().map(|x|x.number()).collect()
+    }
+    /// Getter for the numbers of a row. 
+    /// Takes cell number, 0 to 80, and returns its row.
+    pub fn row_num_fr_cell(&self, n:usize) -> Vec<u8> { 
+        let nr = cell_to_row(n);
+        self.row_num(nr)
     }
     /// Getter for the numbers of a column.
+    /// Takes column number 0 to 8, left to right.
     pub fn col_num(&self, n:usize) -> Vec<u8> {
-        let nc = n % 9;
-        self.col(nc).iter().map(|x|x.number()).collect()
+        self.col(n).iter().map(|x|x.number()).collect()
+    }
+    /// Getter for the numbers of a column. 
+    /// Takes cell number, 0 to 80, and returns its column.
+    pub fn col_num_fr_cell(&self, n:usize) -> Vec<u8> {
+        let nc = cell_to_col(n);
+        self.col_num(nc)
     }
     /// Getter for the numbers of a square.
+    /// Takes square number 0 to 8, top left to botton right.
     pub fn sqr_num(&self, n:usize) -> Vec<u8> {
-        let nr = n / 9;
-        let nc = n % 9;
-        let ns = (nc/3) + (nr/3) * 3;
-        self.sqr(ns).iter().map(|x|x.number()).collect()
+        self.sqr(n).iter().map(|x|x.number()).collect()
     }
+    /// Getter for the numbers of a square. 
+    /// Takes cell number, 0 to 80, and returns its square.
+    pub fn sqr_num_fr_cell(&self, n:usize) -> Vec<u8> {
+        let ns = cell_to_sqr(n);
+        self.sqr_num(ns)
+    }
+
+
     /// Getter for the options of a row.
+    /// Takes row number 0 to 8, up to down.
     pub fn row_opt(&self, n:usize) -> Vec<Vec<u8>> {
-        let nr = n / 9;
-        self.row(nr).iter().map(|x|x.options().to_owned()).collect()
+        self.row(n).iter().map(|x|x.options().to_owned()).collect()
+    }
+    /// Getter for the options of a row. 
+    /// Takes cell number, 0 to 80, and returns its row.
+    pub fn row_opt_fr_cell(&self, n:usize) -> Vec<Vec<u8>> {
+        let nr = cell_to_row(n);
+        self.row_opt(nr)
     }
     /// Getter for the options of a column.
+    /// Takes column number 0 to 8, left to right.
     pub fn col_opt(&self, n:usize) -> Vec<Vec<u8>> {
-        let nc = n % 9;
-        self.col(nc).iter().map(|x|x.options().to_owned()).collect()
+        self.col(n).iter().map(|x|x.options().to_owned()).collect()
+    }
+    /// Getter for the options of a column. 
+    /// Takes cell number, 0 to 80, and returns its column.
+    pub fn col_opt_fr_cell(&self, n:usize) -> Vec<Vec<u8>> {
+        let nc = cell_to_col(n);
+        self.col_opt(nc)
     }
     /// Getter for the options of a square.
+    /// Takes square number 0 to 8, top left to botton right.
     pub fn sqr_opt(&self, n:usize) -> Vec<Vec<u8>> {
-        let nr = n / 9;
-        let nc = n % 9;
-        let ns = (nc/3) + (nr/3) * 3;
-        self.sqr(ns).iter().map(|x|x.options().to_owned()).collect()
+        self.sqr(n).iter().map(|x|x.options().to_owned()).collect()
     }
+    /// Getter for the options of a square. 
+    /// Takes cell number, 0 to 80, and returns its square.
+    pub fn sqr_opt_fr_cell(&self, n:usize) -> Vec<Vec<u8>> {
+        let ns = cell_to_sqr(n);
+        self.sqr_opt(ns)
+    }
+}
+
+fn cell_to_row (n: usize) -> usize {
+    let nr = n / 9;
+    nr
+}
+fn cell_to_col (n: usize) -> usize {
+    let nc = n % 9;
+    nc
+}
+fn cell_to_sqr (n: usize) -> usize {
+    let nr = n / 9;
+    let nc = n % 9;
+    let ns = (nc/3) + (nr/3) * 3;
+    ns
 }
 
 

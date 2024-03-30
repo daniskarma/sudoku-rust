@@ -50,7 +50,7 @@ pub fn solve_naked_pairs(board: &mut Board){
     for i in 0..9{
         let _board = board.clone();
         let row_cells = _board.row(i);
-        let row_opt = _board.row_opt(i*9);
+        let row_opt = _board.row_opt(i);
         naked_group(board, row_opt, row_cells, group);
     }
     for i in 0..9{
@@ -62,7 +62,7 @@ pub fn solve_naked_pairs(board: &mut Board){
     for i in 0..9{
         let _board = board.clone();
         let sqr_cells = _board.sqr(i);
-        let sqr_opt = _board.sqr_opt(i*3+27*(i/3));
+        let sqr_opt = _board.sqr_opt(i);
         naked_group(board, sqr_opt, sqr_cells, group);
     }
     // TODO - los indices de sqr_opt son raros porque no se indexa igual sqr que sqr_opt

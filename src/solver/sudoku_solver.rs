@@ -15,9 +15,9 @@ fn update_options (board: &mut Board, n: usize) {
     }
 
     let mut possibles = board.cell(n).options().clone();
-    let row = board.row_num(n);
-    let col = board.col_num(n);
-    let sqr = board.sqr_num(n);
+    let row = board.row_num_fr_cell(n);
+    let col = board.col_num_fr_cell(n);
+    let sqr = board.sqr_num_fr_cell(n);
     
     possibles.retain(|&x| !row.contains(&x)); 
     possibles.retain(|&x| !col.contains(&x)); 
@@ -44,9 +44,9 @@ fn solve_singles_alone (board: &mut Board){
 fn singles (board: &mut Board, n: usize){
     let possibles = board.cell(n).options().clone();
 
-    let row = board.row_opt(n).into_iter().flatten();
-    let col = board.col_opt(n).into_iter().flatten();
-    let sqr = board.sqr_opt(n).into_iter().flatten();
+    let row = board.row_opt_fr_cell(n).into_iter().flatten();
+    let col = board.col_opt_fr_cell(n).into_iter().flatten();
+    let sqr = board.sqr_opt_fr_cell(n).into_iter().flatten();
     let all_options = row.chain(col).chain(sqr);
     
     for option in possibles{
@@ -66,8 +66,6 @@ fn singles (board: &mut Board, n: usize){
 fn solve_singles (board: &mut Board){
     board_it_cells(board, singles);
 } 
-
-
 
 /// Apply function over Board iterating over 81 cells.
 fn board_it_cells (board: &mut Board, function: fn(&mut Board, usize)) {
