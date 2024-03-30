@@ -25,10 +25,7 @@ fn get_candidates(groups: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>>{
     candidate_list
 }
 
-/// Generic function for naked pairs, triple or quadruple solving.
-/// quantity parameter determine if its pairs, triple or quadruple.
 fn naked_group (board: &mut Board, region_cells: Vec<&Cell>, quantity: usize){
-    // TODO - revisar como pasamos region_Cellls si como referencia o borrow.
     let mut cells_to_change:Vec<(usize,Vec<u8>)> = Vec::new();
 
     let region_opt = board.cells_to_opts(&region_cells);
@@ -51,6 +48,8 @@ fn naked_group (board: &mut Board, region_cells: Vec<&Cell>, quantity: usize){
     }
 }
 
+/// Generic function for naked pairs, triple or quadruple solving.
+/// quantity parameter determine if its pairs, triple or quadruple.
 pub fn solve_naked(board: &mut Board, quantity: usize){
     let groups = [Board::row, Board::col, Board::sqr];
     let board_cells = board.clone();
@@ -65,9 +64,7 @@ pub fn solve_naked(board: &mut Board, quantity: usize){
 #[cfg(test)]
 mod tests {
     use crate::{solver::naked_solver::{get_candidates, naked_group}, Board};
-
     use super::isolate_quantiy_groups;
-
 
     fn create_sudoku1 () -> Board{
         let sudoku_raw: &str = "
