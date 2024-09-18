@@ -11,8 +11,8 @@ fn isolate_quantiy_groups (region_opt: &Vec<Vec<u8>>, quantity: usize) -> Vec<Ve
     }
     group_list
 }
-/// Returns a list of options that repeat x times withing the selected group. X being quantity.
-/// The groups are suppodsely filtered by isolate_quantity_groups() beforehand.
+/// Returns a list of options that repeat x times within the selected group. X being quantity.
+/// The groups are supposedly filtered by isolate_quantity_groups() beforehand.
 fn get_candidates(groups: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>>{
     let mut candidate_list:Vec<Vec<u8>> = vec![];
     for group in &groups {

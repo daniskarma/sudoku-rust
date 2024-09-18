@@ -15,14 +15,14 @@ pub fn run(){
     let sudoku_veryhard_1 = "060089003039100006100730090020060017001000600570090020090024001600003480800610030";
 
     println!("starting...");
-    let mut my_board = Board::create(sudoku_hard_1);
+    let mut my_board = Board::create(sudoku_veryhard_1);
     print_board(&mut my_board, "beauty");
 
     solve(&mut my_board);
     print_board(&mut my_board, "beauty");
 
     println!("");
-    visual::print_options(&my_board); 
+    // visual::print_options(&my_board); 
     println!("");
 }
 

@@ -1,4 +1,4 @@
-use crate::{board::{Board, Cell}, solver::naked_solver, visual};
+use crate::{board::{Board, Cell}, solver::naked_solver};
 
 
 // Sudoku solving strategies at http://www.taupierbw.be/SudokuCoach/
@@ -88,9 +88,9 @@ pub fn solve (board: &mut Board){
         solve_singles(board);
         passes += 1;        
         
-        // TODO - delete
-        visual::print_options(board);
-        visual::print_board(board, "beauty");
+        // TODO - This is just for help finding bugs, it can be commented or deleted
+        // visual::print_options(board);
+        // visual::print_board(board, "beauty");
         //
 
         if board.clone() == prev_board {break;}
