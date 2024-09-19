@@ -84,6 +84,7 @@ pub fn solve (board: &mut Board){
         let prev_board = board.clone();
         solve_update_options(board);
         naked_solver::solve_naked(board, 2);
+        naked_solver::solve_naked(board, 3);
         solve_singles_alone(board);
         solve_singles(board);
         passes += 1;        
