@@ -186,5 +186,7 @@ mod tests {
             vec![3, 4, 5],
         ];
         naked_group(&mut board, my_cells, quantity);
+        let new_row_opts = board.row_opt(0);
+        assert_eq!(new_row_opts, test_row_final);
     }
 }
