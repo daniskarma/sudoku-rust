@@ -1,45 +1,56 @@
 #![allow(dead_code)]
 use crate::board::{Board, Cell};
 
-// BUG - De momento me coge cuando todos los grupos tienen el mismo numero de opciones, pero cuando
-// cambia el numero de opciones no lo detecta, por ejemplo un naked triplet con [2,3] [2,3,4] [2,3,4]
-
 /// Returns list of options that have the required lenght (quantity)
 fn isolate_quantiy_groups(region_opt: &Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>> {
     let mut group_list: Vec<Vec<u8>> = vec![];
     for opt in region_opt {
-        if opt.len() == quantity {
+        if opt.len() > 1 && opt.len() <= quantity {
             group_list.push(opt.to_vec());
         }
     }
     group_list
 }
-// TODO - ver si se puede hacer más elegante dentro del closure en get_candidates
-fn only_contains(group_original: Vec<u8>, group_compare: &Vec<u8>) -> bool {
-    let mut is_true: bool = true;
-    for opt in group_compare {
-        if !group_original.contains(opt) {
-            is_true = false
-        }
-    }
-    is_true
+
+/// Checks that a group only contains numbers that are within the numbers in group_compare
+fn only_contains(group_original: &[u8], group_compare: &[u8]) -> bool {
+    group_original.iter().all(|&x| group_compare.contains(&x))
 }
+
+/// Generates list of combined numbers of n size that will be possible candidates
+fn generate_combinations(n: usize) -> Vec<Vec<u8>> {
+    let mut results = Vec::new();
+    let mut current = Vec::new();
+    backtrack(&mut results, &mut current, n, 1);
+    results
+}
+
+fn backtrack(results: &mut Vec<Vec<u8>>, current: &mut Vec<u8>, n: usize, start: u8) {
+    if current.len() == n {
+        results.push(current.clone());
+        return;
+    }
+
+    for i in start..=9 {
+        current.push(i);
+        backtrack(results, current, n, i + 1);
+        current.pop();
+    }
+}
+
 /// Returns a list of options that repeat X times within the selected group. X being quantity.
 /// The groups are supposedly filtered by isolate_quantity_groups() beforehand.
+/// candidate_list will be a vec or the options Vec[u8] que podremos eliminar del resto de celdas
 fn get_candidates(groups: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>> {
     let mut candidate_list: Vec<Vec<u8>> = vec![];
-    for group in &groups {
-        if candidate_list.iter().any(|x| x == group) {
-            continue;
-        }
-        // BUG - aqui tengo que hacer que solo se añadan a la cuenta aquellos group (cell options)
-        // que coincida que no tienen ninguna opcion que no este en el group sujeto a analisis
+    let combination_list: Vec<Vec<u8>> = generate_combinations(quantity);
+    for combination in combination_list {
         let count = groups
             .iter()
-            .filter(|&x| only_contains(group.to_vec(), x))
+            .filter(|&x| only_contains(x, &combination))
             .count();
         if count == quantity {
-            candidate_list.push(group.to_vec())
+            candidate_list.push(combination.to_vec())
         }
     }
     candidate_list
@@ -61,7 +72,7 @@ fn naked_group(board: &mut Board, region_cells: Vec<&Cell>, quantity: usize) {
             continue;
         }
         for candidate in &candidates {
-            if cell.options() == candidate {
+            if only_contains(cell.options(), candidate) {
                 continue;
             }
             let mut new_opts = cell.options().clone();
@@ -160,6 +171,7 @@ mod tests {
 
     #[test]
     fn test_naked_triplet() {
+        // The triplet is 3,4,5 from cells 2, 6, 8
         let mut board = create_sudoku1();
         board.mut_cell(0).set_options(vec![7]);
         board.mut_cell(1).set_options(vec![8]);
