@@ -24,9 +24,9 @@ pub fn run() {
     solve(&mut my_board);
     print_board(&mut my_board, "beauty");
 
-    println!("");
+    println!();
     // visual::print_options(&my_board);
-    println!("");
+    println!();
 }
 
 #[allow(dead_code)]

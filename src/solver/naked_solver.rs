@@ -1,5 +1,8 @@
 #![allow(dead_code)]
-use crate::board::{Board, Cell};
+use crate::{
+    auxiliar,
+    board::{Board, Cell},
+};
 
 /// Returns list of options that have the required lenght (quantity)
 fn isolate_quantiy_groups(region_opt: &Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>> {
@@ -17,33 +20,12 @@ fn only_contains(group_original: &[u8], group_compare: &[u8]) -> bool {
     group_original.iter().all(|&x| group_compare.contains(&x))
 }
 
-/// Generates list of combined numbers of n size that will be possible candidates
-fn generate_combinations(n: usize) -> Vec<Vec<u8>> {
-    let mut results = Vec::new();
-    let mut current = Vec::new();
-    backtrack(&mut results, &mut current, n, 1);
-    results
-}
-
-fn backtrack(results: &mut Vec<Vec<u8>>, current: &mut Vec<u8>, n: usize, start: u8) {
-    if current.len() == n {
-        results.push(current.clone());
-        return;
-    }
-
-    for i in start..=9 {
-        current.push(i);
-        backtrack(results, current, n, i + 1);
-        current.pop();
-    }
-}
-
 /// Returns a list of options that repeat X times within the selected group. X being quantity.
 /// The groups are supposedly filtered by isolate_quantity_groups() beforehand.
 /// candidate_list will be a vec or the options Vec[u8] que podremos eliminar del resto de celdas
 fn get_candidates(groups: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>> {
     let mut candidate_list: Vec<Vec<u8>> = vec![];
-    let combination_list: Vec<Vec<u8>> = generate_combinations(quantity);
+    let combination_list: Vec<Vec<u8>> = auxiliar::generate_combinations(quantity);
     for combination in combination_list {
         let count = groups
             .iter()
@@ -55,8 +37,9 @@ fn get_candidates(groups: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>> {
     }
     candidate_list
 }
-// Solves naked groups on a sudoku region (file, row, sqr)
-fn naked_group(board: &mut Board, region_cells: Vec<&Cell>, quantity: usize) {
+/// Solves naked groups on a sudoku region (file, row, sqr)
+/// Sets new options on Board
+fn naked_group_solver(board: &mut Board, region_cells: Vec<&Cell>, quantity: usize) {
     let mut cells_to_change: Vec<(usize, Vec<u8>)> = Vec::new();
 
     let region_opt = board.cells_to_opts(&region_cells);
@@ -85,15 +68,15 @@ fn naked_group(board: &mut Board, region_cells: Vec<&Cell>, quantity: usize) {
     }
 }
 
-/// Generic function for naked pairs, triple or quadruple solving.
-/// quantity parameter determine if its pairs, triple or quadruple.
+/// Generic function for naked groups solving.
+/// quantity parameter determine if it's pairs, triple or quadruple.
 pub fn solve_naked(board: &mut Board, quantity: usize) {
     let groups = [Board::row, Board::col, Board::sqr];
     let board_cells = board.clone();
     for group in &groups {
         for i in 0..9 {
             let cells = group(&board_cells, i);
-            naked_group(board, cells, quantity);
+            naked_group_solver(board, cells, quantity);
         }
     }
 }
@@ -102,7 +85,7 @@ pub fn solve_naked(board: &mut Board, quantity: usize) {
 mod tests {
     use super::isolate_quantiy_groups;
     use crate::{
-        solver::naked_solver::{get_candidates, naked_group},
+        solver::naked_solver::{get_candidates, naked_group_solver},
         Board,
     };
 
@@ -151,7 +134,7 @@ mod tests {
 
         let candidates = get_candidates(isolated_groups, quantity);
         assert_eq!(candidates, vec![[2, 5]]);
-        naked_group(&mut board, my_cells, quantity);
+        naked_group_solver(&mut board, my_cells, quantity);
         let new_row_opts = board.row_opt(0);
         assert_eq!(
             new_row_opts,
@@ -197,7 +180,7 @@ mod tests {
             vec![1],
             vec![3, 4, 5],
         ];
-        naked_group(&mut board, my_cells, quantity);
+        naked_group_solver(&mut board, my_cells, quantity);
         let new_row_opts = board.row_opt(0);
         assert_eq!(new_row_opts, test_row_final);
     }

@@ -12,12 +12,11 @@ pub struct Cell {
 #[allow(dead_code)]
 impl Cell {
     fn new(number: u8, original: bool, id: usize) -> Self {
-        let cell_options: Vec<u8>;
-        if original {
-            cell_options = vec![number];
+        let cell_options: Vec<u8> = if original {
+            vec![number]
         } else {
-            cell_options = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
-        }
+            vec![1, 2, 3, 4, 5, 6, 7, 8, 9]
+        };
 
         Cell {
             number,
@@ -77,17 +76,8 @@ impl Board {
             if !"0123456789".contains(char) {
                 panic!("sudoku must be only numbers")
             }
-            let is_original: bool;
-            if char == '0' {
-                is_original = false;
-            } else {
-                is_original = true;
-            }
-            board_cells.push(Cell::new(
-                char.to_digit(10).unwrap() as u8,
-                is_original,
-                i as usize,
-            ));
+            let is_original: bool = char != '0';
+            board_cells.push(Cell::new(char.to_digit(10).unwrap() as u8, is_original, i));
         }
         Board { cells: board_cells }
     }
@@ -251,16 +241,13 @@ impl Board {
 }
 
 fn cell_to_row(n: usize) -> usize {
-    let nr = n / 9;
-    nr
+    n / 9
 }
 fn cell_to_col(n: usize) -> usize {
-    let nc = n % 9;
-    nc
+    n % 9
 }
 fn cell_to_sqr(n: usize) -> usize {
     let nr = n / 9;
     let nc = n % 9;
-    let ns = (nc / 3) + (nr / 3) * 3;
-    ns
+    (nc / 3) + (nr / 3) * 3
 }

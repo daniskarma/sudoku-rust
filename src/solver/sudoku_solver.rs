@@ -1,6 +1,6 @@
 use crate::{
     board::{Board, Cell},
-    solver::naked_solver,
+    solver::naked_solver::{self, solve_naked},
 };
 
 // Sudoku solving strategies at http://www.taupierbw.be/SudokuCoach/
@@ -66,8 +66,8 @@ fn singles(board: &mut Board, n: usize) {
 fn solve_singles(board: &mut Board) {
     board_it_cells(board, singles);
 }
-// TODO - igual deberia ir a mod auxiliar?
-/// Apply function over Board iterating over 81 cells.
+
+/// Applies function over Board iterating over 81 cells.
 fn board_it_cells(board: &mut Board, function: fn(&mut Board, usize)) {
     for n in 0..81 {
         if !board.cell(n).original() {
