@@ -39,6 +39,8 @@ fn get_candidates(groups: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>> {
 }
 /// Solves naked groups on a sudoku region (file, row, sqr)
 /// Sets new options on Board
+// TODO - Check if i can make it all just with region_cells instead of having also board as a
+// parameter
 fn naked_group_solver(board: &mut Board, region_cells: Vec<&Cell>, quantity: usize) {
     let mut cells_to_change: Vec<(usize, Vec<u8>)> = Vec::new();
 

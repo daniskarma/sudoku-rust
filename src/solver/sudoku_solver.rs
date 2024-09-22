@@ -1,6 +1,6 @@
 use crate::{
     board::{Board, Cell},
-    solver::naked_solver::{self, solve_naked},
+    solver::naked_solver::{self},
 };
 
 // Sudoku solving strategies at http://www.taupierbw.be/SudokuCoach/
