@@ -15,21 +15,21 @@ fn isolate_quantiy_groups(region_opt: &Vec<Vec<u8>>, quantity: usize) -> Vec<Vec
     group_list
 }
 
-/// Checks that a group only contains numbers that are within the numbers in group_compare
-fn only_contains(group_original: &[u8], group_compare: &[u8]) -> bool {
-    group_original.iter().all(|&x| group_compare.contains(&x))
+/// Checks that a cell options only contains numbers that are within the numbers in a combination
+fn only_contains(cell_opts: &[u8], combination: &[u8]) -> bool {
+    cell_opts.iter().all(|&opt| combination.contains(&opt))
 }
 
 /// Returns a list of options that repeat X times within the selected group. X being quantity.
 /// The groups are supposedly filtered by isolate_quantity_groups() beforehand.
 /// candidate_list will be a vec or the options Vec[u8] que podremos eliminar del resto de celdas
-fn get_candidates(groups: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>> {
+fn get_candidates(region_opts: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>> {
     let mut candidate_list: Vec<Vec<u8>> = vec![];
     let combination_list: Vec<Vec<u8>> = auxiliar::generate_combinations(quantity);
     for combination in combination_list {
-        let count = groups
+        let count = region_opts
             .iter()
-            .filter(|&x| only_contains(x, &combination))
+            .filter(|&cell_opts| only_contains(cell_opts, &combination))
             .count();
         if count == quantity {
             candidate_list.push(combination.to_vec())
@@ -44,10 +44,10 @@ fn get_candidates(groups: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>> {
 fn naked_group_solver(board: &mut Board, region_cells: Vec<&Cell>, quantity: usize) {
     let mut cells_to_change: Vec<(usize, Vec<u8>)> = Vec::new();
 
-    let region_opt = board.cells_to_opts(&region_cells);
+    let region_opt: Vec<Vec<u8>> = board.cells_to_opts(&region_cells);
 
-    let isolated_groups = isolate_quantiy_groups(&region_opt, quantity);
-    let candidates = get_candidates(isolated_groups, quantity);
+    let isolated_groups: Vec<Vec<u8>> = isolate_quantiy_groups(&region_opt, quantity);
+    let candidates: Vec<Vec<u8>> = get_candidates(isolated_groups, quantity);
 
     for cell in region_cells {
         if cell.original() {

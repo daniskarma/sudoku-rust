@@ -1,6 +1,8 @@
 use crate::{
     board::{Board, Cell},
+    solver::hidden_solver::{self},
     solver::naked_solver::{self},
+    visual::{self},
 };
 
 // Sudoku solving strategies at http://www.taupierbw.be/SudokuCoach/
@@ -83,6 +85,10 @@ pub fn solve(board: &mut Board) {
         solve_update_options(board);
         naked_solver::solve_naked(board, 2);
         naked_solver::solve_naked(board, 3);
+        naked_solver::solve_naked(board, 4);
+        hidden_solver::solve_hidden(board, 2);
+        hidden_solver::solve_hidden(board, 3);
+        hidden_solver::solve_hidden(board, 4);
         solve_singles_alone(board);
         solve_singles(board);
         passes += 1;
@@ -90,7 +96,6 @@ pub fn solve(board: &mut Board) {
         // TODO - This is just for help finding bugs, it can be commented or deleted
         // visual::print_options(board);
         // visual::print_board(board, "beauty");
-        //
 
         if board.clone() == prev_board {
             break;
