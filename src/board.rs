@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use crate::auxiliar;
 use core::panic;
 
@@ -9,7 +10,6 @@ pub struct Cell {
     options: Vec<u8>,
 }
 
-#[allow(dead_code)]
 impl Cell {
     fn new(number: u8, original: bool, id: usize) -> Self {
         let cell_options: Vec<u8> = if original {
@@ -36,6 +36,18 @@ impl Cell {
     }
     pub fn id(&self) -> usize {
         self.id
+    }
+    /// returns the row number of the cell
+    pub fn row(&self) -> usize {
+        cell_to_row(self.id)
+    }
+    /// returns the col number of the cell
+    pub fn col(&self) -> usize {
+        cell_to_col(self.id)
+    }
+    /// returns the sqr number of the cell
+    pub fn sqr(&self) -> usize {
+        cell_to_sqr(self.id)
     }
 
     pub fn set_number(&mut self, number: u8) {

@@ -1,8 +1,8 @@
 use crate::{
     board::{Board, Cell},
-    solver::hidden_solver::{self},
+    solver::{hidden_solver::{self}, pointing_solver},
     solver::naked_solver::{self},
-    visual::{self},
+    //visual::{self},
 };
 
 // Sudoku solving strategies at http://www.taupierbw.be/SudokuCoach/
@@ -89,6 +89,8 @@ pub fn solve(board: &mut Board) {
         hidden_solver::solve_hidden(board, 2);
         hidden_solver::solve_hidden(board, 3);
         hidden_solver::solve_hidden(board, 4);
+        // pointing_solver::solve_pointing(board, 2);
+        // pointing_solver::solve_pointing(board, 3);
         solve_singles_alone(board);
         solve_singles(board);
         passes += 1;

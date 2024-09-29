@@ -23,7 +23,7 @@ fn get_candidates(region_opts: Vec<Vec<u8>>, quantity: usize) -> Vec<Vec<u8>> {
             for number in &combination {
                 if region_opts
                     .iter()
-                    .filter(|&cell_opts| cell_opts.contains(&number))
+                    .filter(|&cell_opts| cell_opts.contains(number))
                     .count()
                     <= 1
                 {
