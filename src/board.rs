@@ -107,6 +107,11 @@ impl Board {
         &self.cells[n]
     }
 
+    /// Getter for a vec of all cells.
+    pub fn cells(&self) -> &Vec<Cell> {
+        &self.cells
+    }
+
     /// Getter for a row. Returns an inmutable reference, so Cells cannot be modified.
     /// Rows are listed up to down, 0 to 8.
     pub fn row(&self, n: usize) -> Vec<&Cell> {
