@@ -2,10 +2,18 @@
 use crate::{
     auxiliar,
     board::{Board, Cell},
+    solver::sudoku_solver::cell_update_options,
 };
 
 // TODO continuar aqui
-pub fn solve_backtracking(board: &mut Board) {}
+pub fn solve_backtracking(board: &mut Board) {
+    for cell_n in 0..80 {
+        if !board.cell(cell_n).original() {
+            continue;
+        }
+        cell_update_options(board, cell_n);
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -13,7 +21,6 @@ mod tests {
 
     use super::solve_backtracking;
     #[test]
-    /// hidden pair [2, 7] in cells 6 and 8
     fn test_hidden_pair() {
         let unsolved_sudoku_raw: &str = "
         042 000 039

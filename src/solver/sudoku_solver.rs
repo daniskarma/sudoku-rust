@@ -1,15 +1,18 @@
 use crate::{
     board::{Board, Cell},
-    solver::{hidden_solver::{self}, pointing_solver},
     solver::naked_solver::{self},
     //visual::{self},
+    solver::{
+        hidden_solver::{self},
+        pointing_solver,
+    },
 };
 
 // Sudoku solving strategies at http://www.taupierbw.be/SudokuCoach/
 
 /// Gives a Cell a set of options based on the basic rules of sudoku.
 /// It will givive any number 1-9 that is not present in the col, row or sqr.
-fn update_options(board: &mut Board, n: usize) {
+pub fn cell_update_options(board: &mut Board, n: usize) {
     {
         let cell = board.mut_cell(n);
         if cell.number() != 0 {
@@ -30,7 +33,7 @@ fn update_options(board: &mut Board, n: usize) {
     board.mut_cell(n).set_options(possibles);
 }
 pub fn solve_update_options(board: &mut Board) {
-    board_it_cells(board, update_options);
+    board_it_cells(board, cell_update_options);
 }
 
 /// If the cell have only one options it makes that option the number.
