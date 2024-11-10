@@ -22,10 +22,10 @@ pub fn run() {
 
     println!("starting...");
     let mut my_board = Board::create(sudoku_veryhard_1);
-    print_board(&mut my_board, "beauty");
+    print_board(&my_board, "beauty");
 
     solve(&mut my_board);
-    print_board(&mut my_board, "beauty");
+    print_board(&my_board, "beauty");
 
     println!();
     visual::print_options(&my_board);

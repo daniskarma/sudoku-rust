@@ -57,8 +57,8 @@ impl Cell {
         self.number = number;
     }
     pub fn set_options(&mut self, options: Vec<u8>) {
-        if options.len() > 8 {
-            panic!("Options cannot have more than 8 elements.")
+        if options.len() > 9 {
+            panic!("Options cannot have more than 9 elements.")
         }
         if !auxiliar::all_unique(&options) {
             panic!("Options elements must be unique.")

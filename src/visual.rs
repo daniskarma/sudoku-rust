@@ -2,7 +2,7 @@
 
 use crate::board::Board;
 
-pub fn print_board(board: &mut Board, mode: &str) {
+pub fn print_board(board: &Board, mode: &str) {
     match mode {
         "plain" => print_plain(board),
         "beauty" => print_beauty(board),
@@ -10,7 +10,7 @@ pub fn print_board(board: &mut Board, mode: &str) {
     }
 }
 
-fn print_plain(board: &mut Board) {
+fn print_plain(board: &Board) {
     for i in 0..9 {
         for j in 0..9 {
             let n = i * 9 + j;
@@ -23,7 +23,7 @@ fn print_plain(board: &mut Board) {
     }
 }
 
-fn print_beauty(board: &mut Board) {
+fn print_beauty(board: &Board) {
     println!("+-------+-------+-------+");
     for i in 0..9 {
         print!("| ");
