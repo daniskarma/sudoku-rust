@@ -1,18 +1,49 @@
 #![allow(dead_code, unused_imports)]
-
+// TODO limpiar un poco todo el codigo y los tests
 use crate::{
     auxiliar,
     board::{Board, Cell},
     solver::sudoku_solver::cell_update_options,
     visual,
 };
-// TODO - hacer algoritmo que detecte que el sudoku tiene soluciones multiples.
-fn backtracking(board: &mut Board, cell_n: usize) -> bool {
+// fn backtracking(board: &mut Board, cell_n: usize) -> bool {
+//     if cell_n > 80 {
+//         return true;
+//     }
+//     if board.cell(cell_n).original() {
+//         if backtracking(board, cell_n + 1) {
+//             return true;
+//         };
+//     } else {
+//         let basic_opts = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
+//         board.mut_cell(cell_n).set_options(basic_opts);
+//         cell_update_options(board, cell_n);
+//         if board.cell(cell_n).options().iter().count() == 0 {
+//             return false;
+//         }
+//         let options = board.cell(cell_n).options().clone();
+//         for opt in options {
+//             board.mut_cell(cell_n).set_number(opt);
+//             if backtracking(board, cell_n + 1) {
+//                 return true;
+//             }
+//             board.mut_cell(cell_n).set_number(0);
+//         }
+//     }
+//     false
+// }
+
+// TODO - mirar como no andar pasando solutions como parametro por todos lados.
+fn backtracking(board: &mut Board, cell_n: usize, solutions: &mut Vec<Vec<u8>>) -> bool {
     if cell_n > 80 {
-        return true;
+        let sol_cells: Vec<u8> = board.cells().iter().map(|x| x.number()).collect();
+        if !solutions.contains(&sol_cells) {
+            solutions.push(sol_cells);
+        }
+        return false; //making this True would make the algorithm stop at the first solution found
     }
     if board.cell(cell_n).original() {
-        if backtracking(board, cell_n + 1) {
+        if backtracking(board, cell_n + 1, solutions) {
             return true;
         };
     } else {
@@ -25,7 +56,7 @@ fn backtracking(board: &mut Board, cell_n: usize) -> bool {
         let options = board.cell(cell_n).options().clone();
         for opt in options {
             board.mut_cell(cell_n).set_number(opt);
-            if backtracking(board, cell_n + 1) {
+            if backtracking(board, cell_n + 1, solutions) {
                 return true;
             }
             board.mut_cell(cell_n).set_number(0);
@@ -35,12 +66,23 @@ fn backtracking(board: &mut Board, cell_n: usize) -> bool {
 }
 /// solve the sudoku using the general backtracking function. If the sudoku is unsolvable returns
 /// the original board.
+// pub fn solve_backtracking(board: &mut Board) {
+//     let original_board = board.clone();
+//     backtracking(board, 0);
+//     if !backtracking(board, 0) {
+//         *board = original_board;
+//     }
+// }
 pub fn solve_backtracking(board: &mut Board) {
     let original_board = board.clone();
-    backtracking(board, 0);
-    if !backtracking(board, 0) {
+    let mut solutions: Vec<Vec<u8>> = Vec::new();
+    backtracking(board, 0, &mut solutions);
+    if !backtracking(board, 0, &mut solutions) {
         *board = original_board;
     }
+    // debug
+    println!("{:?}", solutions);
+    println!("found {} solutions", solutions.len());
 }
 
 #[cfg(test)]
@@ -64,17 +106,17 @@ mod tests {
         // 700 004 005
         // ";
         let unsolved_sudoku_raw: &str = "
-        000 006 000
-        000 070 000
-        000 800 000
+        042 000 030
+        090 000 000
+        000 105 206
 
-        500 020 000
-        007 100 000
-        030 009 000
+        000 040 100
+        005 006 000
+        000 000 000
 
-        002 050 000
-        060 300 000
-        900 004 000
+        600 020 007
+        408 700 390
+        700 004 005
         ";
         let unsolved_sudoku = unsolved_sudoku_raw
             .chars()
